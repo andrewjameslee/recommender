@@ -1,3 +1,3 @@
-shared_articles_file: "data/shared_articles.csv"
-users_interactions_file: "data/users_interactions.csv"
+shared_articles_file: "data/shared_articles.zip"
+users_interactions_file: "data/users_interactions.zip"
 DEBUG: "False"
