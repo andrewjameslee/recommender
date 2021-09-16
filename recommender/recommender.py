@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas.core.indexes.base import Index
 import scipy.sparse as sparse
 import numpy as np
 import random
@@ -191,23 +192,34 @@ if DEBUG == 'True':
 class dataworker:
 
     def getuserstats(self, person_id,dataformat=None):
-        #lookup personid64 from personid
-        person_id64 = grouped_df.personId.loc[grouped_df['person_id'] == person_id ].iloc[0]
-        #get stats from personid
-        stats = df.loc[df['personId'] == person_id64 ]
-    
-        if dataformat == 'html':
-            return stats.to_html()
-        else:
-            return stats.to_json(orient ='index')
+        try:
+            #lookup personid64 from personid
+            person_id64 = grouped_df.personId.loc[grouped_df['person_id'] == person_id ].iloc[0]
+            #get stats from personid
+            stats = df.loc[df['personId'] == person_id64 ]
+        
+            if dataformat == 'html':
+                return stats.to_html()
+            else:
+                return stats.to_json(orient ='index')
+        except (IndexError) as e:
+            print('EXCEPTION RAISED: ' + str(e))
+            print(e.args)
+            return ('cannot return data stats for person_id ' + str(person_id) )     
+          
 
     def getrecommend(self, person_id,dataformat=None):
+        try:
+            recommendations = recommend(person_id, sparse_person_content, person_vecs, content_vecs)
+            if dataformat == 'html':
+                return recommendations.to_html()
+            else:
+                return recommendations.to_json(orient ='index')
         
-        recommendations = recommend(person_id, sparse_person_content, person_vecs, content_vecs)
-        if dataformat == 'html':
-            return recommendations.to_html()
-        else:
-            return recommendations.to_json(orient ='index')
+        except (IndexError, AttributeError) as e:
+            print('EXCEPTION RAISED: ' + str(e))
+            print(e.args)
+            return ('cannot return recommendations for person_id ' + str(person_id) ) 
 
 
 
